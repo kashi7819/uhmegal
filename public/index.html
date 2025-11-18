@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Babyboom — Random Video Chat</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">Babyboom</div>
+    <nav class="toplinks">
+      <div class="link">Updates Soon</div>
+      <button id="reportNav" class="pill report-pill">Report</button>
+      <button id="feedbackNav" class="pill">Feedbacks</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="video-row">
+      <div id="localWrap" class="video-box left">
+        <video id="localVideo" autoplay muted playsinline></video>
+        <div class="center-text" id="localText">You</div>
+        <div id="localProfileCard" class="profile-card small hidden"></div>
+      </div>
+
+      <div id="remoteWrap" class="video-box right">
+        <video id="remoteVideo" autoplay playsinline></video>
+        <div class="center-text" id="remoteText">Stranger</div>
+        <div id="remoteProfileCard" class="profile-card small hidden"></div>
+        <div id="qualityIndicator" class="quality-indicator">Quality: —</div>
+      </div>
+    </section>
+
+    <!-- PROFILE FORM (Option D: above Start/Skip) -->
+    <section class="profile-section">
+      <div class="profile-row">
+        <input id="pfNickname" placeholder="Nickname (optional)" />
+        <input id="pfAge" placeholder="Age (optional)" type="number" min="10" max="120"/>
+        <select id="pfGender">
+          <option value="any">Gender: Any</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        <button id="saveProfileBtn" class="save-profile">Save</button>
+      </div>
+    </section>
+
+    <section class="chat-row">
+      <div class="chat-controls-left">
+        <button id="skipBtn" class="big-skip">Start/Skip</button>
+        <button id="autoNextBtn" class="auto-next">⏺ Auto Next ON</button>
+      </div>
+
+      <div class="chat-input-area">
+        <div id="typingDots" class="typing-dots"><span></span><span></span><span></span></div>
+        <input id="messageInput" placeholder="Type a message..." />
+      </div>
+
+      <div class="chat-controls-right">
+        <button id="sendBtn" class="send-btn">Send<br/><span class="small">Enter</span></button>
+      </div>
+    </section>
+
+    <section class="status-row">
+      <div id="status" class="status">Click "Skip" to start — or wait for pairing</div>
+      <div id="onlineCount" class="online">Online: 0</div>
+    </section>
+
+    <section class="log-row">
+      <div id="chatBox" class="chat-box"></div>
+    </section>
+  </main>
+
+  <!-- Floating theme (moon) -->
+  <button id="themeToggle" class="floating-moon" title="Toggle theme">🌙</button>
+
+  <!-- Report popup -->
+  <div id="reportPopup" class="modal hidden">
+    <div class="modal-inner">
+      <h3>Report Stranger</h3>
+      <div class="reasons">
+        <button class="reason" data-reason="Spam">🚫 Spam</button>
+        <button class="reason" data-reason="Abusive">🤬 Abusive</button>
+        <button class="reason" data-reason="Sexual Content">🔞 Sexual content</button>
+        <button class="reason" data-reason="Fake User">🕵️ Fake user</button>
+      </div>
+      <button id="cancelReport" class="cancel">Cancel</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
