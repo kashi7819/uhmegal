@@ -1,23 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta name="google-site-verification" content="XqpzGUs0SAoT00SKTLd6QwEU7Nkl6n8SDz52DTIF81Y" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BabyBoom Chats - Random Video Chat</title>
 
-<meta name="description" content="BabyBoom Chats - a fast, simple random video chat website like Omegle. Connect with strangers instantly.">
-<meta name="keywords" content="babyboom chats, omegle alternative, random video chat, stranger chat, live chat">
-<meta name="robots" content="index, follow">
-<meta name="googlebot" content="index, follow">
+  <!-- SEO -->
+  <meta name="description" content="BabyBoom Chats - a fast, simple random video chat website like Omegle. Connect with strangers instantly.">
+  <meta name="keywords" content="babyboom chats, omegle alternative, random video chat, stranger chat, live chat">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <meta name="google-site-verification" content="XqpzGUs0SAoT00SKTLd6QwEU7Nkl6n8SDz52DTIF81Y" />
 
-  <meta charset="utf-8" />
-  <title>Babyboom — Random Video Chat</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="baby-boy.png">
 </head>
 <body>
+
+  <!-- TOP BAR -->
   <header class="topbar">
-    <div class="logo">Babyboom</div>
+    <div class="logo">BabyBoom Chats - Random Video Chat</div>
     <nav class="toplinks">
       <div class="link">Updates Soon</div>
       <button id="reportNav" class="pill report-pill">Report</button>
@@ -26,65 +28,113 @@
   </header>
 
   <main class="container">
+
+    <!-- VIDEO AREA -->
     <section class="video-row">
+
+      <!-- LOCAL VIDEO -->
       <div id="localWrap" class="video-box left">
         <video id="localVideo" autoplay muted playsinline></video>
-        <div class="center-text" id="localText">You</div>
+        <div class="center-text">You</div>
+
+        <!-- Local Profile Card (script expects this) -->
         <div id="localProfileCard" class="profile-card small hidden"></div>
+
+        <!-- Camera OFF overlay -->
+        <div class="video-off-overlay">Camera Off</div>
+
+        <!-- Quality Indicator (script expects this) -->
+        <div id="qualityIndicator" class="quality-indicator">Quality: —</div>
+
+        <!-- Beauty button placed inside local wrap for positioning -->
+        <button id="beautyBtn" class="round-btn" title="Beauty filter">
+          <img src="sparkle.png" width="26" alt="beauty">
+        </button>
       </div>
 
+      <!-- REMOTE VIDEO -->
       <div id="remoteWrap" class="video-box right">
         <video id="remoteVideo" autoplay playsinline></video>
-        <div class="center-text" id="remoteText">Stranger</div>
+        <div class="center-text">Stranger</div>
+
+        <!-- Remote Profile Card -->
         <div id="remoteProfileCard" class="profile-card small hidden"></div>
-        <div id="qualityIndicator" class="quality-indicator">Quality: —</div>
+
+        <!-- Camera OFF overlay -->
+        <div class="video-off-overlay">Camera Off</div>
       </div>
+
     </section>
 
-    <!-- PROFILE FORM (Option D: above Start/Skip) -->
+    <!-- PROFILE SECTION -->
     <section class="profile-section">
       <div class="profile-row">
+
         <input id="pfNickname" placeholder="Nickname (optional)" />
-        <input id="pfAge" placeholder="Age (optional)" type="number" min="10" max="120"/>
+        <input id="pfAge" placeholder="Age (optional)" type="number" min="10" max="120" />
+
         <select id="pfGender">
           <option value="any">Gender: Any</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
+
         <button id="saveProfileBtn" class="save-profile">Save</button>
+
+        <!-- MIC + CAMERA CONTROLS -->
+        <div class="profile-controls">
+          <!-- MIC -->
+          <button id="muteBtn" class="round-btn" title="Toggle mic">
+            <img id="micIcon" src="mic.png" width="26" alt="mic">
+          </button>
+
+          <!-- CAMERA -->
+          <button id="cameraBtn" class="round-btn" title="Toggle camera">
+            <img id="camIcon" src="video.png" width="26" alt="camera">
+          </button>
+        </div>
+
       </div>
     </section>
 
+    <!-- CHAT SECTION -->
     <section class="chat-row">
+
       <div class="chat-controls-left">
         <button id="skipBtn" class="big-skip">Start/Skip</button>
         <button id="autoNextBtn" class="auto-next">⏺ Auto Next ON</button>
       </div>
 
       <div class="chat-input-area">
-        <div id="typingDots" class="typing-dots"><span></span><span></span><span></span></div>
+        <div id="typingDots" class="typing-dots" style="display:none;">
+          <span></span><span></span><span></span>
+        </div>
         <input id="messageInput" placeholder="Type a message..." />
       </div>
 
       <div class="chat-controls-right">
-        <button id="sendBtn" class="send-btn">Send<br/><span class="small">Enter</span></button>
+        <button id="sendBtn" class="send-btn">Send<br><span class="small">Enter</span></button>
       </div>
+
     </section>
 
+    <!-- STATUS BAR -->
     <section class="status-row">
       <div id="status" class="status">Click "Skip" to start — or wait for pairing</div>
       <div id="onlineCount" class="online">Online: 0</div>
     </section>
 
+    <!-- CHAT LOG -->
     <section class="log-row">
       <div id="chatBox" class="chat-box"></div>
     </section>
+
   </main>
 
-  <!-- Floating theme (moon) -->
+  <!-- THEME BUTTON -->
   <button id="themeToggle" class="floating-moon" title="Toggle theme">🌙</button>
 
-  <!-- Report popup -->
+  <!-- REPORT MODAL -->
   <div id="reportPopup" class="modal hidden">
     <div class="modal-inner">
       <h3>Report Stranger</h3>
@@ -98,15 +148,9 @@
     </div>
   </div>
 
+  <!-- SCRIPTS -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
-  <h1>BabyBoom Chats</h1>
-<p>BabyBoom Chats is a random video chat website similar to Omegle. Connect with strangers instantly.</p>
 
 </body>
 </html>
-
-
-
-
-
