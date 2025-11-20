@@ -26,7 +26,14 @@ const pfNickname = document.getElementById("pfNickname");
 const pfAge = document.getElementById("pfAge");
 const pfGender = document.getElementById("pfGender");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
-
+let audioCtx;
+let sourceNode;
+let pitchNode;
+let gainNode;
+let destinationStream;
+let audioCtx2;
+let pitchShifterNode;
+let processedStream;
 
 /* ------------------ STATE ------------------ */
 let myId = null;
