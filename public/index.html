@@ -42,6 +42,8 @@
 
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="baby-boy.png">
+  <link rel="manifest" href="manifest.json">
+
 </head>
 <body>
 
@@ -178,8 +180,17 @@
   <!-- SCRIPTS -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
+  <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js")
+      .then(() => console.log("SW registered"))
+      .catch(err => console.log("SW failed", err));
+  }
+</script>
+
 
 </body>
 </html>
+
 
 
