@@ -447,3 +447,8 @@ button:active {
               inset 0 0 12px #00ff9d;
   z-index: 10;
 }
+#localVideo {
+  transform: scaleX(-1);
+}
+
+
