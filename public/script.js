@@ -26,14 +26,6 @@ const pfNickname = document.getElementById("pfNickname");
 const pfAge = document.getElementById("pfAge");
 const pfGender = document.getElementById("pfGender");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
-let audioCtx;
-let sourceNode;
-let pitchNode;
-let gainNode;
-let destinationStream;
-
-
-
 
 /* ------------------ STATE ------------------ */
 let myId = null;
@@ -104,72 +96,7 @@ async function ensureLocal() {
     console.error("getUserMedia failed:", err);
     throw err;
   }
-}/* ------------------ REAL VOICE CHANGER ENGINE (single, safe) ------------------ */
-/*
-  Uses ScriptProcessor to do simple pitch-scaling. This is CPU-light but not perfect
-  — good for fun voice shifts. For higher-quality pitch shifting, a more advanced
-  algorithm (phase vocoder, WASM) would be required.
-*/
-async function applyVoiceEffect(mode) {
-  await ensureLocal();
-  if (!localStream) return;
-
-  // close any previous audio context to avoid stacking processors
-  try {
-    if (vcAudioCtx) await vcAudioCtx.close();
-  } catch (e) {
-    // ignore
-  }
-  vcAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  // pick pitch factor
-  let pitchFactor = 1.0;
-  switch (mode) {
-    case "female": pitchFactor = 1.6; break;
-    case "cute": pitchFactor = 1.9; break;
-    case "child": pitchFactor = 2.3; break;
-    case "deep": pitchFactor = 0.6; break;
-    default: pitchFactor = 1.0; break;
-  }
-
-  // create nodes
-  const source = vcAudioCtx.createMediaStreamSource(localStream);
-  vcProcessor = vcAudioCtx.createScriptProcessor(2048, 1, 1);
-
-  vcProcessor.onaudioprocess = function (e) {
-    const input = e.inputBuffer.getChannelData(0);
-    const output = e.outputBuffer.getChannelData(0);
-
-    // simple resampling-style pitch change
-    for (let i = 0; i < input.length; i++) {
-      const idx = Math.floor(i / pitchFactor);
-      output[i] = input[idx] || 0;
-    }
-  };
-
-  // connect and create destination stream
-  source.connect(vcProcessor);
-  const dest = vcAudioCtx.createMediaStreamDestination();
-  vcProcessor.connect(dest);
-
-  const newTrack = dest.stream.getAudioTracks()[0];
-
-  // if pc exists, replace audio track immediately
-  const sender = pc?.getSenders?.()?.find(s => s.track && s.track.kind === "audio");
-  if (sender && newTrack) {
-    try {
-      await sender.replaceTrack(newTrack);
-    } catch (e) {
-      console.warn("replaceTrack failed:", e);
-      // if replace fails, store pending mode and try later
-      pendingVoiceMode = mode;
-    }
-  } else {
-    // store pending so we apply when pc becomes available
-    pendingVoiceMode = mode;
-  }
 }
-
 
 /* ------------------ WEBRTC: utility to wait for a desired signaling state ------------------ */
 function waitForSignalingState(targetState, timeout = 3000) {
@@ -427,14 +354,6 @@ if (muteBtn) {
     } catch (e) {
       console.warn("mute error", e);
     }
-  });
-}
-/* ------------------ VOICE DROPDOWN LISTENER ------------------ */
-const voiceDropdown = document.getElementById("voiceMode");
-if (voiceDropdown) {
-  voiceDropdown.addEventListener("change", (e) => {
-    const mode = e.target.value;
-    applyVoiceEffect(mode);   // 🔥 THIS triggers voice changer
   });
 }
 
