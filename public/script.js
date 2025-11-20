@@ -26,6 +26,11 @@ const pfNickname = document.getElementById("pfNickname");
 const pfAge = document.getElementById("pfAge");
 const pfGender = document.getElementById("pfGender");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
+let audioCtx;
+let sourceNode;
+let pitchNode;
+let gainNode;
+let destinationStream;
 
 /* ------------------ STATE ------------------ */
 let myId = null;
@@ -401,3 +406,4 @@ window.addEventListener("beforeunload", () => {
     localStream?.getTracks().forEach(t => t.stop());
   } catch {}
 });
+
