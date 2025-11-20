@@ -469,6 +469,23 @@ button:active {
 #voiceMode:hover {
   box-shadow: 0 0 10px #4a6cf7;
 }
+/* --- FIX CHAT MIRRORING ISSUE --- */
+#localWrap {
+  transform: none !important;      /* Prevent parent inheritance */
+}
+
+#localWrap *:not(video):not(#localVideo) {
+  transform: none !important;      /* Prevent mirror from affecting other children */
+}
+
+#chatBox, 
+.message, 
+.system, 
+#typingDots, 
+#messageInput {
+  transform: none !important;      /* Ensure chat ALWAYS stays normal */
+}
+
 
 
 
