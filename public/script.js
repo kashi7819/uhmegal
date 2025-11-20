@@ -31,9 +31,6 @@ let sourceNode;
 let pitchNode;
 let gainNode;
 let destinationStream;
-let audioCtx2;
-let pitchShifterNode;
-let processedStream;
 
 /* ------------------ STATE ------------------ */
 let myId = null;
@@ -41,6 +38,7 @@ let currentRoom = null;
 let localStream = null;
 let pc = null;
 let beautyOn = false;
+
 /* ------------------ VOICE CHANGE (shared) ------------------ */
 let vcAudioCtx = null;
 let vcProcessor = null;
@@ -108,7 +106,6 @@ async function ensureLocal() {
     console.error("getUserMedia failed:", err);
     throw err;
   }
-}
 }/* ------------------ REAL VOICE CHANGER ENGINE (single, safe) ------------------ */
 /*
   Uses ScriptProcessor to do simple pitch-scaling. This is CPU-light but not perfect
@@ -487,6 +484,7 @@ window.addEventListener("beforeunload", () => {
     localStream?.getTracks().forEach(t => t.stop());
   } catch {}
 });
+
 
 
 
