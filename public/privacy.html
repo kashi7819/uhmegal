@@ -5,56 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Privacy Policy - BabyBoom Chats</title>
   
-  <!-- PROFESSIONAL ABOUT CSS -->
+  <!-- PROFESSIONAL PRIVACY CSS -->
 <style>
   :root {
-    --text: #1a1a1a;
-    --subtext: #555;
-    --accent: #4a6cf7;
-    --bg: #f8f9fc;
-    --card-bg: #ffffff;
-    --border: #e5e7eb;
+    --bg: #08090c;
+    --card: rgba(20, 24, 34, 0.55);
+    --glass-bg: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --neon: #4af7ed;
+    --neon2: #4a6cf7;
+    --text: #e5e5e8;
+    --subtext: #a5a5a8;
   }
 
   body {
     margin: 0;
     padding: 0;
-    font-family: "Inter", Arial, sans-serif;
     background: var(--bg);
+    font-family: "Inter", Arial, sans-serif;
     color: var(--text);
+    backdrop-filter: blur(4px);
   }
 
   .container {
     max-width: 900px;
-    margin: 50px auto;
-    background: var(--card-bg);
+    margin: 60px auto;
     padding: 40px;
-    border-radius: 18px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    background: var(--glass-bg);
+    border-radius: 20px;
     border: 1px solid var(--border);
+    box-shadow: 0 0 30px rgba(0,255,255,0.06), inset 0 0 20px rgba(255,255,255,0.02);
+    backdrop-filter: blur(18px);
   }
 
   h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
-    font-weight: 700;
-    color: var(--accent);
     text-align: center;
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--neon);
+    text-shadow: 0 0 12px var(--neon), 0 0 25px var(--neon);
+    margin-bottom: 20px;
   }
 
   h2 {
-    margin-top: 35px;
+    margin-top: 40px;
+    color: var(--neon2);
     font-size: 24px;
-    color: var(--accent);
-    border-left: 6px solid var(--accent);
     padding-left: 15px;
-    font-weight: 600;
+    border-left: 4px solid var(--neon2);
+    text-shadow: 0 0 12px var(--neon2);
   }
 
   p, li {
     font-size: 17px;
-    line-height: 1.75;
     color: var(--subtext);
+    line-height: 1.8;
     margin-bottom: 12px;
   }
 
@@ -63,28 +68,29 @@
   }
 
   .highlight-box {
-    background: #eef1ff;
-    padding: 18px;
-    border-left: 6px solid var(--accent);
-    border-radius: 8px;
     margin: 25px 0;
-    font-size: 16px;
+    padding: 18px;
+    background: rgba(0,255,255,0.08);
+    border-left: 4px solid var(--neon);
+    border-radius: 12px;
     color: var(--subtext);
+    box-shadow: 0 0 20px rgba(0,255,255,0.15);
+  }
+
+  a {
+    color: var(--neon);
+    text-decoration: none;
   }
 
   footer {
+    margin-top: 40px;
     text-align: center;
     padding: 20px;
-    margin-top: 40px;
     color: var(--subtext);
     font-size: 14px;
   }
 </style>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; line-height: 1.6; }
-    h1 { font-size: 28px; margin-bottom: 20px; }
-    h2 { margin-top: 30px; }
-  </style>
+
 </head>
 <body>
 <div class="container">
@@ -143,3 +149,4 @@ with strangers.</p>
 
 </body>
 </html>
+
