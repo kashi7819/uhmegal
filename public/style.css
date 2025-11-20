@@ -450,5 +450,26 @@ button:active {
 #localVideo {
   transform: scaleX(-1);
 }
+#voiceMode {
+  background: #111827;         /* Dark background */
+  color: #fff;                 /* White text */
+  border: 1px solid #4a6cf7;   /* Neon border */
+  border-radius: 8px;
+  padding: 8px 14px;
+  outline: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Dropdown options styling */
+#voiceMode option {
+  background: #0d1117;   /* Dark background */
+  color: #fff;           /* White text */
+}
+#voiceMode:hover {
+  box-shadow: 0 0 10px #4a6cf7;
+}
+
+
 
 
