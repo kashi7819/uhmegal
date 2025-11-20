@@ -102,6 +102,65 @@ async function ensureLocal() {
     throw err;
   }
 }
+function applyVoiceEffect(mode) {
+  if (!localStream) return;
+
+  // Create audio context
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  // Create nodes
+  sourceNode = audioCtx.createMediaStreamSource(localStream);
+  pitchNode = audioCtx.createBiquadFilter();
+  gainNode = audioCtx.createGain();
+
+  // Voice types
+  switch (mode) {
+    case "female":
+      pitchNode.type = "highshelf";
+      pitchNode.frequency.value = 3000;
+      pitchNode.gain.value = 15;
+      break;
+
+    case "deep":
+      pitchNode.type = "lowshelf";
+      pitchNode.frequency.value = 200;
+      pitchNode.gain.value = 15;
+      break;
+
+    case "cute":
+      pitchNode.type = "highshelf";
+      pitchNode.frequency.value = 2000;
+      pitchNode.gain.value = 25;
+      break;
+
+    case "child":
+      pitchNode.type = "highpass";
+      pitchNode.frequency.value = 1000;
+      pitchNode.gain.value = 10;
+      break;
+
+    default:
+      pitchNode.frequency.value = 0;
+      pitchNode.gain.value = 0;
+  }
+
+  // Connect chain
+  sourceNode.connect(pitchNode);
+  pitchNode.connect(gainNode);
+
+  // Output modified audio
+  destinationStream = audioCtx.createMediaStreamDestination();
+  gainNode.connect(destinationStream);
+
+  // Replace track in WebRTC
+  const newTrack = destinationStream.stream.getAudioTracks()[0];
+  const sender = pc.getSenders().find(s => s.track && s.track.kind === "audio");
+  
+  if (sender && newTrack) {
+    sender.replaceTrack(newTrack);
+  }
+}
+
 
 /* ------------------ WEBRTC: utility to wait for a desired signaling state ------------------ */
 function waitForSignalingState(targetState, timeout = 3000) {
@@ -380,6 +439,14 @@ if (cameraBtn) {
     }
   });
 }
+/* ------------------ VOICE DROPDOWN LISTENER ------------------ */
+const voiceDropdown = document.getElementById("voiceMode");
+if (voiceDropdown) {
+  voiceDropdown.addEventListener("change", (e) => {
+    const mode = e.target.value;
+    applyVoiceEffect(mode);   // 🔥 THIS triggers voice changer
+  });
+}
 
 /* Receive remote camera status */
 socket.on("remoteCamera", ({ enabled } = {}) => {
@@ -406,4 +473,5 @@ window.addEventListener("beforeunload", () => {
     localStream?.getTracks().forEach(t => t.stop());
   } catch {}
 });
+
 
