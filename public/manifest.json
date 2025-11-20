@@ -1,19 +1,20 @@
 {
   "name": "BabyBoom Chats",
   "short_name": "BabyBoom",
+  "description": "Random Video Chat - BabyBoom Chats",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "description": "Random video chat – BabyBoom Chats",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "/baby-boy.png",
+      "src": "baby-boy.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/baby-boy.png",
+      "src": "baby-boy.png",
       "sizes": "512x512",
       "type": "image/png"
     }
