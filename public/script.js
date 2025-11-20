@@ -26,11 +26,7 @@ const pfNickname = document.getElementById("pfNickname");
 const pfAge = document.getElementById("pfAge");
 const pfGender = document.getElementById("pfGender");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
-let audioCtx;
-let sourceNode;
-let pitchNode;
-let gainNode;
-let destinationStream;
+
 
 /* ------------------ STATE ------------------ */
 let myId = null;
@@ -38,6 +34,10 @@ let currentRoom = null;
 let localStream = null;
 let pc = null;
 let beautyOn = false;
+/* ------------------ VOICE CHANGE (shared) ------------------ */
+let vcAudioCtx = null;
+let vcProcessor = null;
+let pendingVoiceMode = null; // if pc not ready, store mode
 
 /* ------------------ HELPERS ------------------ */
 function safeGet(el, fallback = null) {
@@ -102,62 +102,69 @@ async function ensureLocal() {
     throw err;
   }
 }
-function applyVoiceEffect(mode) {
+}/* ------------------ REAL VOICE CHANGER ENGINE (single, safe) ------------------ */
+/*
+  Uses ScriptProcessor to do simple pitch-scaling. This is CPU-light but not perfect
+  — good for fun voice shifts. For higher-quality pitch shifting, a more advanced
+  algorithm (phase vocoder, WASM) would be required.
+*/
+async function applyVoiceEffect(mode) {
+  await ensureLocal();
   if (!localStream) return;
 
-  // Create audio context
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  // close any previous audio context to avoid stacking processors
+  try {
+    if (vcAudioCtx) await vcAudioCtx.close();
+  } catch (e) {
+    // ignore
+  }
+  vcAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-  // Create nodes
-  sourceNode = audioCtx.createMediaStreamSource(localStream);
-  pitchNode = audioCtx.createBiquadFilter();
-  gainNode = audioCtx.createGain();
-
-  // Voice types
+  // pick pitch factor
+  let pitchFactor = 1.0;
   switch (mode) {
-    case "female":
-      pitchNode.type = "highshelf";
-      pitchNode.frequency.value = 3000;
-      pitchNode.gain.value = 15;
-      break;
-
-    case "deep":
-      pitchNode.type = "lowshelf";
-      pitchNode.frequency.value = 200;
-      pitchNode.gain.value = 15;
-      break;
-
-    case "cute":
-      pitchNode.type = "highshelf";
-      pitchNode.frequency.value = 2000;
-      pitchNode.gain.value = 25;
-      break;
-
-    case "child":
-      pitchNode.type = "highpass";
-      pitchNode.frequency.value = 1000;
-      pitchNode.gain.value = 10;
-      break;
-
-    default:
-      pitchNode.frequency.value = 0;
-      pitchNode.gain.value = 0;
+    case "female": pitchFactor = 1.6; break;
+    case "cute": pitchFactor = 1.9; break;
+    case "child": pitchFactor = 2.3; break;
+    case "deep": pitchFactor = 0.6; break;
+    default: pitchFactor = 1.0; break;
   }
 
-  // Connect chain
-  sourceNode.connect(pitchNode);
-  pitchNode.connect(gainNode);
+  // create nodes
+  const source = vcAudioCtx.createMediaStreamSource(localStream);
+  vcProcessor = vcAudioCtx.createScriptProcessor(2048, 1, 1);
 
-  // Output modified audio
-  destinationStream = audioCtx.createMediaStreamDestination();
-  gainNode.connect(destinationStream);
+  vcProcessor.onaudioprocess = function (e) {
+    const input = e.inputBuffer.getChannelData(0);
+    const output = e.outputBuffer.getChannelData(0);
 
-  // Replace track in WebRTC
-  const newTrack = destinationStream.stream.getAudioTracks()[0];
-  const sender = pc.getSenders().find(s => s.track && s.track.kind === "audio");
-  
+    // simple resampling-style pitch change
+    for (let i = 0; i < input.length; i++) {
+      const idx = Math.floor(i / pitchFactor);
+      output[i] = input[idx] || 0;
+    }
+  };
+
+  // connect and create destination stream
+  source.connect(vcProcessor);
+  const dest = vcAudioCtx.createMediaStreamDestination();
+  vcProcessor.connect(dest);
+
+  const newTrack = dest.stream.getAudioTracks()[0];
+
+  // if pc exists, replace audio track immediately
+  const sender = pc?.getSenders?.()?.find(s => s.track && s.track.kind === "audio");
   if (sender && newTrack) {
-    sender.replaceTrack(newTrack);
+    try {
+      await sender.replaceTrack(newTrack);
+    } catch (e) {
+      console.warn("replaceTrack failed:", e);
+      // if replace fails, store pending mode and try later
+      pendingVoiceMode = mode;
+    }
+  } else {
+    // store pending so we apply when pc becomes available
+    pendingVoiceMode = mode;
   }
 }
 
@@ -473,5 +480,6 @@ window.addEventListener("beforeunload", () => {
     localStream?.getTracks().forEach(t => t.stop());
   } catch {}
 });
+
 
 
